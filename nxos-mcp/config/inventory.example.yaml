@@ -1,0 +1,61 @@
+# Example inventory for a VXLAN BGP-EVPN fabric.
+# Copy to inventory.yaml and adjust. Credentials come from env / credentials_ref.
+
+defaults:
+  protocol: https
+  port: 443
+  path: /ins
+  api_style: jsonrpc  # jsonrpc | ins_api
+  connect_timeout_s: 5
+  read_timeout_s: 30
+  underlay_vrf: default
+  # VERIFY: adjust for your platform/release command quirks
+  platform_profile: n9k-10.3
+
+devices:
+  - name: leaf-01
+    host: 10.0.0.11
+    role: leaf
+    site: dc1
+    platform: N9K-C93180YC-FX3
+    credentials_ref: NXOS_DEFAULT  # maps to NXOS_USERNAME / NXOS_PASSWORD
+    vrfs: [TENANT_A, TENANT_B, management]
+    allowed_tools: []  # empty = all tools
+    allowed_vrfs: [TENANT_A, TENANT_B, default, management]
+    tags: [pod1]
+
+  - name: leaf-02
+    host: 10.0.0.12
+    role: leaf
+    site: dc1
+    platform: N9K-C93180YC-FX3
+    credentials_ref: NXOS_DEFAULT
+    vrfs: [TENANT_A, TENANT_B, management]
+    allowed_vrfs: [TENANT_A, TENANT_B, default, management]
+    tags: [pod1]
+
+  - name: spine-01
+    host: 10.0.0.1
+    role: spine
+    site: dc1
+    platform: N9K-C9336C-FX2
+    credentials_ref: NXOS_DEFAULT
+    vrfs: [default, management]
+    allowed_vrfs: [default, management]
+    tags: [underlay]
+
+  - name: border-01
+    host: 10.0.0.21
+    role: border
+    site: dc1
+    platform: N9K-C93180YC-FX3
+    credentials_ref: NXOS_DEFAULT
+    vrfs: [TENANT_A, TENANT_B, EXTERNAL, management]
+    allowed_vrfs: [TENANT_A, TENANT_B, EXTERNAL, default, management]
+    tags: [edge]
+
+# Optional per-credentials_ref overrides (values from env still preferred)
+credential_refs:
+  NXOS_DEFAULT:
+    username_env: NXOS_USERNAME
+    password_env: NXOS_PASSWORD
