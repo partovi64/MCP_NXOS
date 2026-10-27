@@ -5,7 +5,7 @@ from cisco_show_tshoot.guardrails import limit_output, validate_batch
 
 def test_batch_rejects_all_before_execution():
     with pytest.raises(PolicyError):
-        validate_batch(["show version", "reload"])
+        validate_batch(["show version", "conf t"])
 
 
 def test_batch_limit():
