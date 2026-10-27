@@ -1,0 +1,6 @@
+access_model:
+  unknown_device: deny
+  explicit_device_alias_required: true
+  least_privilege_account_required: true
+  production_access_requires_review: true
+# Device aliases are configured in src/cisco_show_tshoot/inventory.py.

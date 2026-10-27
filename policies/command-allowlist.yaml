@@ -1,0 +1,27 @@
+mode: read_only
+max_command_length: 256
+max_batch_commands: 8
+commands:
+  - show version
+  - show clock
+  - show ip interface brief
+  - show interfaces
+  - show interfaces <interface>
+  - show interfaces counters errors
+  - show ip route
+  - show ip route <IPv4-address>
+  - show ip ospf neighbor
+  - show ip bgp summary
+  - show vlan brief
+  - show interfaces trunk
+  - show spanning-tree
+  - show spanning-tree vlan <vlan-id>
+  - show logging
+deny:
+  - configure terminal
+  - write memory
+  - reload
+  - clear
+  - debug
+  - shell escape
+  - command chaining
