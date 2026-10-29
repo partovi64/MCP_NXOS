@@ -1,0 +1,104 @@
+# Command guardrails — enforced in code (fail closed).
+
+allowlist:
+  # Base show / probe forms (full regex anchored by validator)
+  - '^show\s+.+$'
+  - '^ping\s+.+$'
+  - '^traceroute\s+.+$'
+
+# Hard denylist substrings / patterns (case-insensitive)
+denylist:
+  - '(?i)\bconfigure\b'
+  - '(?i)\bconf\s+t\b'
+  - '(?i)\bcopy\b'
+  - '(?i)\bwrite\b'
+  - '(?i)\breload\b'
+  - '(?i)\bdelete\b'
+  - '(?i)\berase\b'
+  - '(?i)\bformat\b'
+  - '(?i)\binstall\b'
+  - '(?i)\bboot\b'
+  - '(?i)\bclear\b'
+  - '(?i)\bdebug\b'
+  - '(?i)\bterminal\b'
+  - '(?i)\brun\s+bash\b'
+  - '(?i)\bguestshell\b'
+  - '(?i)\bpython\b'
+  - '(?i)\btclsh\b'
+  - '(?i)\busername\b'
+  - '(?i)\bshutdown\b'
+  - '(?i)^\s*no\s+'
+  - '(?i)\bfeature\b'
+  - '(?i)\bcheckpoint\b'
+  - '(?i)\brollback\b'
+  - '(?i)\bevent\b'
+  - '(?i)\bscheduler\b'
+  - '(?i)\bssh\b'
+  - '(?i)\btelnet\b'
+  - '(?i)\btftp\b'
+  - '(?i)\bftp\b'
+  - '(?i)\bscp\b'
+  - '(?i)\bsftp\b'
+  - '(?i)\bcrypto\b'
+  - '(?i)\|\s*redirect\b'
+  - '(?i)>\s*\S+'
+  - '(?i)\|\s*email\b'
+  - '(?i)\|\s*tee\b'
+  - '(?i)\bbash\b'
+  - '(?i)show\s+tech-support'
+  - '(?i)show\s+running-config\s+(aaa|snmp|tacacs|radius|user|crypto|key)'
+
+# Sensitive show running-config is blocked unless narrow subsection allowlisted
+block_show_running_config: true
+allow_show_tech_support: false
+
+allowed_pipes:
+  - json
+  - include
+  - exclude
+  - grep
+  - count
+  - last
+  - begin
+  - section
+  - wc
+
+pipe_arg_max_length: 64
+pipe_arg_charset: '^[A-Za-z0-9_.:\\-/\\s\\^\\$\\[\\]\\(\\)\\|\\?\\*\\+\\\\]+$'
+
+# Injection / chaining
+forbidden_chars:
+  - ';'
+  - '&&'
+  - '||'
+  - '`'
+  - '$('
+  - '\n'
+  - '\r'
+
+limits:
+  max_output_bytes: 65536
+  max_fanout_devices: 10
+  max_concurrent_per_device: 3
+  global_concurrency: 20
+  rate_limit_per_device: 5.0  # tokens per second
+  rate_limit_burst: 10
+  ping_count_max: 5
+  ping_timeout_max_s: 2
+  ping_size_max: 1500
+  traceroute_probe_max: 5
+  log_last_n_max: 200
+  table_page_default: 50
+  table_page_max: 200
+
+# Destination safety for ping/traceroute
+allowed_prefixes:
+  - 10.0.0.0/8
+  - 172.16.0.0/12
+  - 192.168.0.0/16
+  - fc00::/7
+  - fe80::/10
+
+deny_broadcast_multicast: true
+require_vrf_for_ping_traceroute: true
+cache_vrf_list_ttl_s: 300

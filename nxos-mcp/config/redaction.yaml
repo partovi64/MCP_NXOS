@@ -1,0 +1,29 @@
+# Output / log redaction patterns. Applied to all tool outputs and audit-adjacent logs.
+patterns:
+  - name: password_inline
+    regex: '(?i)(password|passwd|pwd)\s*[:=]\s*\S+'
+    replace: '\1=***REDACTED***'
+  - name: secret_inline
+    regex: '(?i)(secret|shared-secret)\s*[:=]\s*\S+'
+    replace: '\1=***REDACTED***'
+  - name: community
+    regex: '(?i)(community)\s+[^\s]+'
+    replace: '\1 ***REDACTED***'
+  - name: key_string
+    regex: '(?i)(key(?:-string)?|auth-key|privacy-key)\s+[^\s]+'
+    replace: '\1 ***REDACTED***'
+  - name: token
+    regex: '(?i)(token|api[_-]?key|bearer)\s*[:=]?\s*\S+'
+    replace: '\1 ***REDACTED***'
+  - name: snmp_user
+    regex: '(?i)(snmp-server\s+user\s+\S+(?:\s+\S+){0,8})'
+    replace: 'snmp-server user ***REDACTED***'
+  - name: tacacs
+    regex: '(?i)(tacacs(?:-server)?(?:\s+\S+){1,6})'
+    replace: 'tacacs ***REDACTED***'
+  - name: radius
+    regex: '(?i)(radius(?:-server)?(?:\s+\S+){1,6})'
+    replace: 'radius ***REDACTED***'
+  - name: enable_secret
+    regex: '(?i)(enable\s+(?:secret|password)\s+)\S+'
+    replace: '\1***REDACTED***'

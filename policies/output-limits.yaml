@@ -1,5 +1,0 @@
-max_output_bytes: 200000
-command_timeout_seconds: 15
-workflow_timeout_seconds: 60
-max_batch_commands: 8
-max_concurrent_sessions_per_device: 2
