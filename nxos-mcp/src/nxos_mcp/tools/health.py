@@ -58,9 +58,7 @@ def register_health_tools(mcp: Any, rt: Runtime) -> None:
                 # Pipe include with charset validation via validator
                 # Escape by restricting charset in require()
                 cmd = f"show logging last {last_n} | include {filter}"
-            result = await rt.execute(
-                dev, cmd, tool="show_logging_recent", include_raw=include_raw
-            )
+            result = await rt.execute(dev, cmd, tool="show_logging_recent", include_raw=include_raw)
             return result.model_dump()
         except Exception as exc:
             return error_result(exc, device=device)

@@ -1,0 +1,26 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "body": {
+      "TABLE_vrf": {
+        "ROW_vrf": [
+          {
+            "vrf_name": "default",
+            "vrf_id": "1",
+            "vrf_state": "Up"
+          },
+          {
+            "vrf_name": "TENANT_A",
+            "vrf_id": "2",
+            "vrf_state": "Up"
+          },
+          {
+            "vrf_name": "TENANT_B",
+            "vrf_id": "3",
+            "vrf_state": "Up"
+          }
+    ]
+    }
+  },
+  "id": 1
+}

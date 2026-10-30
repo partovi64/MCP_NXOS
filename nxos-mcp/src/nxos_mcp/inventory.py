@@ -55,9 +55,8 @@ class Device(BaseModel):
         cleaned = value.strip()
         if not cleaned or any(c in cleaned for c in " \t\n/\\"):
             raise ValueError(
-                    "device name must be a non-empty token "
-                    "without whitespace or path chars"
-                )
+                "device name must be a non-empty token without whitespace or path chars"
+            )
         return cleaned
 
     def resolved(self, defaults: DeviceDefaults) -> Device:

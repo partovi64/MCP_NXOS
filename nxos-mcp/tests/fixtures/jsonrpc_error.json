@@ -1,0 +1,11 @@
+{
+  "jsonrpc": "2.0",
+  "error": {
+    "code": -32602,
+    "message": "Command does not support JSON output",
+    "data": {
+      "msg": "show vrf detail: command not supported in JSON"
+    }
+  },
+  "id": 1
+}

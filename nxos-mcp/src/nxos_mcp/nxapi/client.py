@@ -64,6 +64,12 @@ class NxapiClient:
         if self._owns_client:
             await self._client.aclose()
 
+    async def __aenter__(self) -> NxapiClient:
+        return self
+
+    async def __aexit__(self, *exc_info: object) -> None:
+        await self.aclose()
+
     async def show(
         self,
         device: Device,
@@ -81,9 +87,7 @@ class NxapiClient:
         if style == "jsonrpc":
             # JSON-RPC cli returns structured JSON; text fallback uses ins_api
             if output_format == "text":
-                return await self._ins_api(
-                    device, command, output_format="text", auth=auth
-                )
+                return await self._ins_api(device, command, output_format="text", auth=auth)
             return await self._jsonrpc(device, command, auth=auth)
         return await self._ins_api(device, command, output_format=output_format, auth=auth)
 

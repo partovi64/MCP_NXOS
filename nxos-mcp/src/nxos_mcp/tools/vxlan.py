@@ -50,8 +50,7 @@ def register_vxlan_tools(mcp: Any, rt: Runtime) -> None:
     @mcp.tool(
         name="show_nve_vni",
         description=(
-            "Show NVE VNI state (Up/Down, type L2/L3). "
-            "Filter by VNI when isolating one segment."
+            "Show NVE VNI state (Up/Down, type L2/L3). Filter by VNI when isolating one segment."
         ),
         annotations={"title": "Show NVE VNI", **HINTS},
     )
@@ -146,8 +145,7 @@ def register_vxlan_tools(mcp: Any, rt: Runtime) -> None:
     @mcp.tool(
         name="show_bgp_evpn_summary",
         description=(
-            "Show BGP L2VPN EVPN neighbor summary. "
-            "Use when EVPN sessions or prefixes look wrong."
+            "Show BGP L2VPN EVPN neighbor summary. Use when EVPN sessions or prefixes look wrong."
         ),
         annotations={"title": "Show BGP EVPN Summary", **HINTS},
     )
@@ -204,9 +202,7 @@ def register_vxlan_tools(mcp: Any, rt: Runtime) -> None:
                 if not all(c.isalnum() or c in ".:-" for c in rd):
                     raise ValueError("invalid RD")
                 cmd = f"show bgp l2vpn evpn rd {rd}"
-            result = await rt.execute(
-                dev, cmd, tool="show_bgp_evpn_route", include_raw=include_raw
-            )
+            result = await rt.execute(dev, cmd, tool="show_bgp_evpn_route", include_raw=include_raw)
             all_rows = rows(result.data)
             filtered = all_rows
             if vni is not None:
@@ -220,10 +216,10 @@ def register_vxlan_tools(mcp: Any, rt: Runtime) -> None:
                 filtered = [r for r in filtered if ip_s in str(r)]
             if route_type != "all":
                 filtered = [
-                r
-                for r in filtered
-                if f"[{route_type}]" in str(r) or f"type {route_type}" in str(r).lower()
-            ]
+                    r
+                    for r in filtered
+                    if f"[{route_type}]" in str(r) or f"type {route_type}" in str(r).lower()
+                ]
             sliced, page_meta = page(filtered, offset=offset, limit=limit)
             return {
                 "summary": {"matched": len(filtered), **page_meta},
@@ -330,8 +326,7 @@ def register_vxlan_tools(mcp: Any, rt: Runtime) -> None:
     @mcp.tool(
         name="show_evpn_esi",
         description=(
-            "Show EVPN Ethernet Segment (ESI) state. "
-            "Use for EVPN multihoming / ESI issues."
+            "Show EVPN Ethernet Segment (ESI) state. Use for EVPN multihoming / ESI issues."
         ),
         annotations={"title": "Show EVPN ESI", **HINTS},
     )

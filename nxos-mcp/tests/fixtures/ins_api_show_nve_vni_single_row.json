@@ -1,0 +1,25 @@
+{
+  "ins_api": {
+    "version": "1.0",
+    "type": "cli_show",
+    "sid": "1",
+    "outputs": {
+      "output": {
+        "body": {
+          "TABLE_nve_vni": {
+            "ROW_nve_vni": {
+              "vni": "10010",
+              "vni-state": "Up",
+              "vni-type": "L2",
+              "bd": "10",
+              "mcast": "0.0.0.0",
+              "vlan-mode": "CE"
+            }
+          }
+        },
+        "msg": "Success",
+        "code": "200"
+      }
+    }
+  }
+}

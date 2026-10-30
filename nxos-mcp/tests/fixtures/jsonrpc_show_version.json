@@ -1,0 +1,19 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "body": {
+      "TABLE_sys_ver": {
+        "ROW_sys_ver": {
+          "bios_ver_str": "05.42",
+          "kickstart_ver_str": "9.3(10)",
+          "sys_ver_str": "9.3(10)",
+          "chassis_id": "Nexus9000 C93180YC-FX3 chassis",
+          "cpu_name": "Intel(R) Xeon(R) CPU E5-2403",
+          "memory": "16400160",
+          "uptime": "42 day(s), 3 hour(s), 11 minute(s), 5 second(s)"
+        }
+      }
+    }
+  },
+  "id": 1
+}

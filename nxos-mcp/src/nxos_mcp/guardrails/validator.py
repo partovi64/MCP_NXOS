@@ -14,9 +14,7 @@ from nxos_mcp.nxapi.errors import GuardrailViolation
 
 # Strict argument patterns for templated commands
 RE_VRF = re.compile(r"^[A-Za-z0-9_.:-]{1,32}$")
-RE_IPV4 = re.compile(
-    r"^(?:(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d?\d)$"
-)
+RE_IPV4 = re.compile(r"^(?:(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d?\d)$")
 RE_IPV6 = re.compile(r"^[0-9A-Fa-f:]+$")
 RE_MAC = re.compile(
     r"^(?:[0-9A-Fa-f]{4}\.){2}[0-9A-Fa-f]{4}$"

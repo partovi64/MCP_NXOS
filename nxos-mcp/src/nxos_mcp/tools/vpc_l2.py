@@ -98,8 +98,7 @@ def register_vpc_l2_tools(mcp: Any, rt: Runtime) -> None:
     @mcp.tool(
         name="show_mac_address_table",
         description=(
-            "Show MAC address table filtered by VLAN/MAC/interface. "
-            "Use for L2 location of a host."
+            "Show MAC address table filtered by VLAN/MAC/interface. Use for L2 location of a host."
         ),
         annotations={"title": "Show MAC Address Table", **HINTS},
     )

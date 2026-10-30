@@ -174,22 +174,16 @@ def test_pipe_not_allowed(validator: CommandValidator) -> None:
 
 def test_ping_destination_outside_prefix(validator: CommandValidator) -> None:
     with pytest.raises(GuardrailViolation):
-        validator.build_ping(
-            PingArgs(target="8.8.8.8", vrf="default", count=2, timeout=2)
-        )
+        validator.build_ping(PingArgs(target="8.8.8.8", vrf="default", count=2, timeout=2))
 
 
 def test_ping_multicast_blocked(validator: CommandValidator) -> None:
     with pytest.raises(GuardrailViolation):
-        validator.build_ping(
-            PingArgs(target="224.0.0.5", vrf="default", count=1, timeout=1)
-        )
+        validator.build_ping(PingArgs(target="224.0.0.5", vrf="default", count=1, timeout=1))
 
 
 def test_ping_allowed_rfc1918(validator: CommandValidator) -> None:
-    cmd = validator.build_ping(
-        PingArgs(target="10.1.2.3", vrf="default", count=2, timeout=2)
-    )
+    cmd = validator.build_ping(PingArgs(target="10.1.2.3", vrf="default", count=2, timeout=2))
     assert cmd.startswith("ping 10.1.2.3")
 
 

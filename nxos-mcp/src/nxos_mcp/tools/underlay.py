@@ -19,8 +19,7 @@ def register_underlay_tools(mcp: Any, rt: Runtime) -> None:
     @mcp.tool(
         name="show_ospf_neighbors",
         description=(
-            "Show OSPF neighbors. Use when underlay is OSPF and adjacency/VTEP "
-            "reachability fails."
+            "Show OSPF neighbors. Use when underlay is OSPF and adjacency/VTEP reachability fails."
         ),
         annotations={"title": "Show OSPF Neighbors", **HINTS},
     )
@@ -67,8 +66,7 @@ def register_underlay_tools(mcp: Any, rt: Runtime) -> None:
     @mcp.tool(
         name="show_bgp_ipv4_summary",
         description=(
-            "Show BGP IPv4 unicast summary (underlay eBGP). "
-            "Use for underlay BGP session health."
+            "Show BGP IPv4 unicast summary (underlay eBGP). Use for underlay BGP session health."
         ),
         annotations={"title": "Show BGP IPv4 Summary", **HINTS},
     )

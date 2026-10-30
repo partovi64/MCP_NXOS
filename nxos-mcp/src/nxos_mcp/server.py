@@ -31,6 +31,18 @@ Send = Callable[[Message], Awaitable[None]]
 ASGIApp = Callable[..., Awaitable[None]]
 
 
+async def _send_json(send: Send, status: int, payload: dict[str, str]) -> None:
+    body = json.dumps(payload).encode()
+    await send(
+        {
+            "type": "http.response.start",
+            "status": status,
+            "headers": [(b"content-type", b"application/json")],
+        }
+    )
+    await send({"type": "http.response.body", "body": body})
+
+
 class BearerAuthMiddleware:
     """Pure-ASGI middleware enforcing a constant-time bearer-token check."""
 
@@ -40,21 +52,17 @@ class BearerAuthMiddleware:
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
         if scope.get("type") == "http":
+            # Unauthenticated liveness probe for load balancers / orchestrators.
+            if scope.get("path") == "/healthz":
+                await _send_json(send, 200, {"status": "ok"})
+                return
             headers = {
                 k.decode("latin-1").lower(): v.decode("latin-1")
                 for k, v in scope.get("headers", [])
             }
             provided = headers.get("authorization", "").encode()
             if not hmac.compare_digest(provided, self._expected):
-                body = json.dumps({"error": "unauthorized"}).encode()
-                await send(
-                    {
-                        "type": "http.response.start",
-                        "status": 401,
-                        "headers": [(b"content-type", b"application/json")],
-                    }
-                )
-                await send({"type": "http.response.body", "body": body})
+                await _send_json(send, 401, {"error": "unauthorized"})
                 return
         await self._app(scope, receive, send)
 
@@ -115,9 +123,7 @@ def run(settings: Settings | None = None) -> None:
     if settings.allow_insecure:
         log.warning("startup_insecure_tls", msg="NXOS_ALLOW_INSECURE=true")
     if settings.transport == Transport.STREAMABLE_HTTP and not settings.http_bearer_token:
-        raise SystemExit(
-            "NXOS_HTTP_BEARER_TOKEN is required for streamable-http transport"
-        )
+        raise SystemExit("NXOS_HTTP_BEARER_TOKEN is required for streamable-http transport")
 
     mcp = create_mcp(settings=settings)
 

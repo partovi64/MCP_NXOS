@@ -62,3 +62,18 @@ async def test_bearer_auth_non_http_scope_passthrough() -> None:
     middleware = BearerAuthMiddleware(downstream, "t")  # type: ignore[arg-type]
     # Lifespan scopes have no headers — must pass through untouched.
     await middleware({"type": "lifespan"}, _noop_receive, _Recorder())  # type: ignore[arg-type]
+
+
+async def test_healthz_unauthenticated() -> None:
+    async def downstream(scope: Any, receive: Any, send: Any) -> None:
+        raise AssertionError("downstream must not be reached for /healthz")
+
+    middleware = BearerAuthMiddleware(downstream, "t")  # type: ignore[arg-type]
+    send = _Recorder()
+    await middleware(
+        {"type": "http", "path": "/healthz", "headers": []},  # type: ignore[arg-type]
+        _noop_receive,
+        send,  # type: ignore[arg-type]
+    )
+    assert send.messages[0]["status"] == 200
+    assert json.loads(send.messages[1]["body"]) == {"status": "ok"}

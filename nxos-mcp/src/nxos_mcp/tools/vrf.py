@@ -22,8 +22,7 @@ def register_vrf_tools(mcp: Any, rt: Runtime) -> None:
     @mcp.tool(
         name="list_vrfs",
         description=(
-            "List VRFs with state. Use to discover tenant VRFs and L3 context "
-            "before per-VRF tools."
+            "List VRFs with state. Use to discover tenant VRFs and L3 context before per-VRF tools."
         ),
         annotations={"title": "List VRFs", **HINTS},
     )
@@ -69,8 +68,7 @@ def register_vrf_tools(mcp: Any, rt: Runtime) -> None:
     @mcp.tool(
         name="show_ip_route_vrf",
         description=(
-            "Show IPv4 routes in a VRF (optional prefix). "
-            "Use for blackhole / missing route checks."
+            "Show IPv4 routes in a VRF (optional prefix). Use for blackhole / missing route checks."
         ),
         annotations={"title": "Show IP Route VRF", **HINTS},
     )
@@ -162,8 +160,7 @@ def register_vrf_tools(mcp: Any, rt: Runtime) -> None:
     @mcp.tool(
         name="show_bgp_vrf_summary",
         description=(
-            "Show BGP summary for a VRF address-family. "
-            "Use to check PE-CE / overlay BGP sessions."
+            "Show BGP summary for a VRF address-family. Use to check PE-CE / overlay BGP sessions."
         ),
         annotations={"title": "Show BGP VRF Summary", **HINTS},
     )
@@ -188,8 +185,7 @@ def register_vrf_tools(mcp: Any, rt: Runtime) -> None:
     @mcp.tool(
         name="show_bgp_vrf",
         description=(
-            "Show BGP routes in a VRF AF (optional prefix). "
-            "Use after local RIB checks fail."
+            "Show BGP routes in a VRF AF (optional prefix). Use after local RIB checks fail."
         ),
         annotations={"title": "Show BGP VRF", **HINTS},
     )
@@ -248,9 +244,7 @@ def register_vrf_tools(mcp: Any, rt: Runtime) -> None:
                     target=target, vrf=vrf, count=count, timeout=timeout, size=size, source=source
                 )
             )
-            result = await rt.execute(
-                dev, cmd, tool="ping_vrf", vrf=vrf, include_raw=include_raw
-            )
+            result = await rt.execute(dev, cmd, tool="ping_vrf", vrf=vrf, include_raw=include_raw)
             return result.model_dump()
         except Exception as exc:
             return error_result(exc, device=device)
@@ -283,8 +277,7 @@ def register_vrf_tools(mcp: Any, rt: Runtime) -> None:
     @mcp.tool(
         name="show_vrf_rt_import_export",
         description=(
-            "Show VRF route-target import/export. "
-            "Use for EVPN type-5 / inter-VRF RT mismatch."
+            "Show VRF route-target import/export. Use for EVPN type-5 / inter-VRF RT mismatch."
         ),
         annotations={"title": "Show VRF RT Import/Export", **HINTS},
     )
@@ -354,8 +347,7 @@ def register_vrf_tools(mcp: Any, rt: Runtime) -> None:
                     "ok": len(ok),
                     "failed": len(results) - len(ok),
                     "note": (
-                        "Compare RD/RT/L3VNI fields manually from data; "
-                        "schema varies by release"
+                        "Compare RD/RT/L3VNI fields manually from data; schema varies by release"
                     ),
                 },
                 "data": results,

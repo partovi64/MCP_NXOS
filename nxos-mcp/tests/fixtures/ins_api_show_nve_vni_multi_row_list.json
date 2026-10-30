@@ -1,0 +1,31 @@
+{
+  "ins_api": {
+    "version": "1.0",
+    "type": "cli_show",
+    "sid": "1",
+    "outputs": {
+      "output": [
+        {
+          "body": {
+            "TABLE_nve_vni": {
+              "ROW_nve_vni": [
+                {
+                  "vni": "10010",
+                  "vni-state": "Up",
+                  "vni-type": "L2"
+                },
+                {
+                  "vni": "10020",
+                  "vni-state": "Down",
+                  "vni-type": "L2"
+                }
+              ]
+            }
+          },
+          "msg": "Success",
+          "code": "200"
+        }
+      ]
+    }
+  }
+}

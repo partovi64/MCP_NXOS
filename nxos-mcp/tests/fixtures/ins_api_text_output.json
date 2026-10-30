@@ -1,0 +1,14 @@
+{
+  "ins_api": {
+    "version": "1.0",
+    "type": "cli_show",
+    "sid": "1",
+    "outputs": {
+      "output": {
+        "body": "VRF-Name        VRF-ID   State   Reason\nTENANT_A        2        Up      --\nTENANT_B        3        Up      --",
+        "msg": "Success",
+        "code": "200"
+      }
+    }
+  }
+}

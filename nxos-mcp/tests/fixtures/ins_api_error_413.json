@@ -1,0 +1,16 @@
+{
+  "ins_api": {
+    "version": "1.0",
+    "type": "cli_show",
+    "sid": "1",
+    "outputs": {
+      "output": {
+        "body": {
+          "clierror": "XML response exceeds 100 MB limit"
+        },
+        "msg": "Response too large",
+        "code": "413"
+      }
+    }
+  }
+}
