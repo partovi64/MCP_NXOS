@@ -8,7 +8,8 @@ license = { text = "Apache-2.0" }
 authors = [{ name = "NX-OS MCP Contributors" }]
 keywords = ["mcp", "nx-os", "cisco", "vxlan", "evpn", "network-automation"]
 dependencies = [
-    "mcp>=1.6.0",
+    "mcp>=1.6.0,<2",
+    "uvicorn>=0.30.0",
     "httpx>=0.28.0",
     "pydantic>=2.10.0",
     "pydantic-settings>=2.7.0",
@@ -59,6 +60,11 @@ strict = true
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
+# mcp 1.x's @mcp.tool() decorator is typed as Callable[[AnyFunction], AnyFunction]
+# where AnyFunction is a plain Callable[..., Any] alias (not a TypeVar), so every
+# decorated tool loses its signature. Upstream limitation — tool functions are
+# fully typed themselves.
+disallow_untyped_decorators = false
 packages = ["nxos_mcp"]
 mypy_path = "src"
 

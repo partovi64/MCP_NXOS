@@ -6,7 +6,7 @@ import argparse
 import sys
 
 from nxos_mcp.server import run
-from nxos_mcp.settings import Settings, Transport, load_settings
+from nxos_mcp.settings import Transport, load_settings
 
 
 def build_parser() -> argparse.ArgumentParser:

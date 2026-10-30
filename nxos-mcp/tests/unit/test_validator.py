@@ -129,7 +129,7 @@ def test_allowed_commands(validator: CommandValidator, command: str) -> None:
         not in {
             "",  # handled
             "\u200bshow version",  # may normalize to allowed
-            "ping 8.8.8.8 vrf default count 2 timeout 2 packet-size 100",  # allowlist ok; dest check separate
+            "ping 8.8.8.8 vrf default count 2 timeout 2 packet-size 100",  # allowlist ok
         }
     ],
 )

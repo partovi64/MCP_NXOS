@@ -64,7 +64,7 @@ allowed_pipes:
   - wc
 
 pipe_arg_max_length: 64
-pipe_arg_charset: '^[A-Za-z0-9_.:\\-/\\s\\^\\$\\[\\]\\(\\)\\|\\?\\*\\+\\\\]+$'
+pipe_arg_charset: '^[A-Za-z0-9_.:\-/\s\^\$\[\]\(\)\|\?\*\+\\]+$'
 
 # Injection / chaining
 forbidden_chars:

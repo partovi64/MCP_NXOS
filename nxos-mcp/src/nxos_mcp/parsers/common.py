@@ -26,7 +26,9 @@ def pick(row: dict[str, Any], *keys: str, default: Any = None) -> Any:
     return default
 
 
-def summarize_peers(rows_in: list[dict[str, Any]], state_keys: tuple[str, ...] = ("state",)) -> dict[str, Any]:
+def summarize_peers(
+    rows_in: list[dict[str, Any]], state_keys: tuple[str, ...] = ("state",)
+) -> dict[str, Any]:
     up = 0
     down = 0
     for row in rows_in:

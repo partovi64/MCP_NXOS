@@ -31,12 +31,15 @@ def register_health_tools(mcp: Any, rt: Runtime) -> None:
                 include_raw=include_raw,
             )
             return result.model_dump()
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)
 
     @mcp.tool(
         name="show_logging_recent",
-        description="Show recent syslog lines (last_n≤200, optional include filter). Use for event correlation.",
+        description=(
+            "Show recent syslog lines (last_n<=200, optional include filter). "
+            "Use for event correlation."
+        ),
         annotations={"title": "Show Logging Recent", **HINTS},
     )
     async def show_logging_recent(
@@ -59,7 +62,7 @@ def register_health_tools(mcp: Any, rt: Runtime) -> None:
                 dev, cmd, tool="show_logging_recent", include_raw=include_raw
             )
             return result.model_dump()
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)
 
     @mcp.tool(
@@ -74,7 +77,7 @@ def register_health_tools(mcp: Any, rt: Runtime) -> None:
                 dev, "show module", tool="show_module", include_raw=include_raw
             )
             return result.model_dump()
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)
 
     @mcp.tool(
@@ -89,5 +92,5 @@ def register_health_tools(mcp: Any, rt: Runtime) -> None:
                 dev, "show environment", tool="show_environment", include_raw=include_raw
             )
             return result.model_dump()
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)

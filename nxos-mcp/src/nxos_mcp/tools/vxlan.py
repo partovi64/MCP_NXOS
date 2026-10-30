@@ -19,7 +19,9 @@ HINTS = {
 def register_vxlan_tools(mcp: Any, rt: Runtime) -> None:
     @mcp.tool(
         name="show_nve_peers",
-        description="Show NVE peer state. Use when VTEP adjacency or VXLAN tunnel status is suspect.",
+        description=(
+            "Show NVE peer state. Use when VTEP adjacency or VXLAN tunnel status is suspect."
+        ),
         annotations={"title": "Show NVE Peers", **HINTS},
     )
     async def show_nve_peers(device: str, include_raw: bool = False) -> dict[str, Any]:
@@ -42,12 +44,15 @@ def register_vxlan_tools(mcp: Any, rt: Runtime) -> None:
                 "truncated": result.truncated,
                 "meta": result.meta.model_dump(),
             }
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)
 
     @mcp.tool(
         name="show_nve_vni",
-        description="Show NVE VNI state (Up/Down, type L2/L3). Filter by VNI when isolating one segment.",
+        description=(
+            "Show NVE VNI state (Up/Down, type L2/L3). "
+            "Filter by VNI when isolating one segment."
+        ),
         annotations={"title": "Show NVE VNI", **HINTS},
     )
     async def show_nve_vni(
@@ -56,10 +61,7 @@ def register_vxlan_tools(mcp: Any, rt: Runtime) -> None:
         try:
             dev = rt.get_device(device)
             rt.assert_tool_allowed(dev, "show_nve_vni")
-            if vni is not None:
-                cmd = f"show nve vni {ArgSchemas.vni(vni)}"
-            else:
-                cmd = "show nve vni"
+            cmd = f"show nve vni {ArgSchemas.vni(vni)}" if vni is not None else "show nve vni"
             result = await rt.execute(dev, cmd, tool="show_nve_vni", include_raw=include_raw)
             vni_rows = rows(result.data)
             down = [
@@ -75,12 +77,15 @@ def register_vxlan_tools(mcp: Any, rt: Runtime) -> None:
                 "truncated": result.truncated,
                 "meta": result.meta.model_dump(),
             }
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)
 
     @mcp.tool(
         name="show_nve_interface",
-        description="Show nve1 interface (source-interface, encapsulation). Use to verify VTEP loopback binding.",
+        description=(
+            "Show nve1 interface (source-interface, encapsulation). "
+            "Use to verify VTEP loopback binding."
+        ),
         annotations={"title": "Show NVE Interface", **HINTS},
     )
     async def show_nve_interface(device: str, include_raw: bool = False) -> dict[str, Any]:
@@ -90,7 +95,7 @@ def register_vxlan_tools(mcp: Any, rt: Runtime) -> None:
                 dev, "show nve interface", tool="show_nve_interface", include_raw=include_raw
             )
             return result.model_dump()
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)
 
     @mcp.tool(
@@ -106,12 +111,15 @@ def register_vxlan_tools(mcp: Any, rt: Runtime) -> None:
                 dev, "show nve multisite", tool="show_nve_multisite", include_raw=include_raw
             )
             return result.model_dump()
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)
 
     @mcp.tool(
         name="show_vni_mapping",
-        description="Show VLAN↔VNI and VRF↔L3VNI mappings. Use when a VNI or tenant mapping looks wrong.",
+        description=(
+            "Show VLAN<->VNI and VRF<->L3VNI mappings. "
+            "Use when a VNI or tenant mapping looks wrong."
+        ),
         annotations={"title": "Show VNI Mapping", **HINTS},
     )
     async def show_vni_mapping(device: str, include_raw: bool = False) -> dict[str, Any]:
@@ -125,17 +133,22 @@ def register_vxlan_tools(mcp: Any, rt: Runtime) -> None:
                 "summary": vlan.summary,
                 "data": rows(vlan.data),
                 "raw": vlan.raw,
-                "warnings": vlan.warnings
-                + ["# VERIFY: show vxlan JSON schema varies; confirm on your NX-OS release"],
+                "warnings": [
+                    *vlan.warnings,
+                    "# VERIFY: show vxlan JSON schema varies; confirm on your NX-OS release",
+                ],
                 "truncated": vlan.truncated,
                 "meta": vlan.meta.model_dump(),
             }
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)
 
     @mcp.tool(
         name="show_bgp_evpn_summary",
-        description="Show BGP L2VPN EVPN neighbor summary. Use when EVPN sessions or prefixes look wrong.",
+        description=(
+            "Show BGP L2VPN EVPN neighbor summary. "
+            "Use when EVPN sessions or prefixes look wrong."
+        ),
         annotations={"title": "Show BGP EVPN Summary", **HINTS},
     )
     async def show_bgp_evpn_summary(device: str, include_raw: bool = False) -> dict[str, Any]:
@@ -156,7 +169,7 @@ def register_vxlan_tools(mcp: Any, rt: Runtime) -> None:
                 "truncated": result.truncated,
                 "meta": result.meta.model_dump(),
             }
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)
 
     @mcp.tool(
@@ -183,7 +196,7 @@ def register_vxlan_tools(mcp: Any, rt: Runtime) -> None:
             cmd = "show bgp l2vpn evpn"
             if route_type != "all":
                 # VERIFY: filter syntax; may need 'show bgp l2vpn evpn' + client-side filter
-                cmd = f"show bgp l2vpn evpn"
+                cmd = "show bgp l2vpn evpn"
             if rd:
                 if not ArgSchemas.prefix.__doc__:
                     pass
@@ -206,18 +219,24 @@ def register_vxlan_tools(mcp: Any, rt: Runtime) -> None:
                 ip_s = ArgSchemas.ip(ip)
                 filtered = [r for r in filtered if ip_s in str(r)]
             if route_type != "all":
-                filtered = [r for r in filtered if f"[{route_type}]" in str(r) or f"type {route_type}" in str(r).lower()]
+                filtered = [
+                r
+                for r in filtered
+                if f"[{route_type}]" in str(r) or f"type {route_type}" in str(r).lower()
+            ]
             sliced, page_meta = page(filtered, offset=offset, limit=limit)
             return {
                 "summary": {"matched": len(filtered), **page_meta},
                 "data": sliced,
                 "raw": result.raw,
-                "warnings": result.warnings
-                + ["Client-side filters applied; prefer RD-scoped command when possible"],
+                "warnings": [
+                    *result.warnings,
+                    "Client-side filters applied; prefer RD-scoped command when possible",
+                ],
                 "truncated": result.truncated or page_meta.get("has_more", False),
                 "meta": result.meta.model_dump(),
             }
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)
 
     @mcp.tool(
@@ -236,7 +255,10 @@ def register_vxlan_tools(mcp: Any, rt: Runtime) -> None:
         try:
             dev = rt.get_device(device)
             if vni is not None and mac:
-                cmd = f"show l2route evpn mac evi {ArgSchemas.vni(vni)} detail | include {ArgSchemas.mac(mac)}"
+                cmd = (
+                    f"show l2route evpn mac evi {ArgSchemas.vni(vni)} detail"
+                    f" | include {ArgSchemas.mac(mac)}"
+                )
             elif vni is not None:
                 cmd = f"show l2route evpn mac evi {ArgSchemas.vni(vni)}"
             else:
@@ -254,12 +276,14 @@ def register_vxlan_tools(mcp: Any, rt: Runtime) -> None:
                 "truncated": result.truncated or page_meta["has_more"],
                 "meta": result.meta.model_dump(),
             }
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)
 
     @mcp.tool(
         name="show_l2route_evpn_mac_ip",
-        description="Show l2route EVPN MAC-IP bindings. Use for ARP/GARP mobility and duplicate IP.",
+        description=(
+            "Show l2route EVPN MAC-IP bindings. Use for ARP/GARP mobility and duplicate IP."
+        ),
         annotations={"title": "Show L2Route EVPN MAC-IP", **HINTS},
     )
     async def show_l2route_evpn_mac_ip(
@@ -282,7 +306,7 @@ def register_vxlan_tools(mcp: Any, rt: Runtime) -> None:
                 "truncated": result.truncated,
                 "meta": result.meta.model_dump(),
             }
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)
 
     @mcp.tool(
@@ -300,12 +324,15 @@ def register_vxlan_tools(mcp: Any, rt: Runtime) -> None:
                 include_raw=include_raw,
             )
             return result.model_dump()
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)
 
     @mcp.tool(
         name="show_evpn_esi",
-        description="Show EVPN Ethernet Segment (ESI) state. Use for EVPN multihoming / ESI issues.",
+        description=(
+            "Show EVPN Ethernet Segment (ESI) state. "
+            "Use for EVPN multihoming / ESI issues."
+        ),
         annotations={"title": "Show EVPN ESI", **HINTS},
     )
     async def show_evpn_esi(device: str, include_raw: bool = False) -> dict[str, Any]:
@@ -316,7 +343,7 @@ def register_vxlan_tools(mcp: Any, rt: Runtime) -> None:
                 dev, "show evpn ethernet-segment", tool="show_evpn_esi", include_raw=include_raw
             )
             return result.model_dump()
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)
 
     @mcp.tool(
@@ -365,5 +392,5 @@ def register_vxlan_tools(mcp: Any, rt: Runtime) -> None:
                 out["data"]["traceroute"] = tr.data
                 out["warnings"] = out["warnings"] + tr.warnings
             return out
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)

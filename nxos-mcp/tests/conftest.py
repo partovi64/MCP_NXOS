@@ -9,7 +9,7 @@ import pytest
 from nxos_mcp.guardrails.policy import load_policy
 from nxos_mcp.guardrails.redaction import load_redactor
 from nxos_mcp.guardrails.validator import CommandValidator
-from nxos_mcp.inventory import Inventory, load_inventory
+from nxos_mcp.inventory import load_inventory
 from nxos_mcp.settings import Settings
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -46,7 +46,9 @@ def settings(tmp_path, monkeypatch):
     monkeypatch.setenv("NXOS_USERNAME", "testuser")
     monkeypatch.setenv("NXOS_PASSWORD", "testpass")
     inv = tmp_path / "inventory.yaml"
-    inv.write_text((CONFIG / "inventory.example.yaml").read_text(encoding="utf-8"), encoding="utf-8")
+    inv.write_text(
+        (CONFIG / "inventory.example.yaml").read_text(encoding="utf-8"), encoding="utf-8"
+    )
     return Settings(
         username="testuser",
         password="testpass",

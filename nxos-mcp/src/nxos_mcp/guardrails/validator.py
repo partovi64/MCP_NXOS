@@ -18,7 +18,10 @@ RE_IPV4 = re.compile(
     r"^(?:(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d?\d)$"
 )
 RE_IPV6 = re.compile(r"^[0-9A-Fa-f:]+$")
-RE_MAC = re.compile(r"^(?:[0-9A-Fa-f]{4}\.){2}[0-9A-Fa-f]{4}$|^([0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}$")
+RE_MAC = re.compile(
+    r"^(?:[0-9A-Fa-f]{4}\.){2}[0-9A-Fa-f]{4}$"
+    r"|^(?:[0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}$"
+)
 RE_IFACE = re.compile(
     r"^(?:Ethernet|Eth|port-channel|Po|Vlan|Lo|loopback|mgmt|nve)"
     r"[0-9]+(?:/[0-9]+)*(?:\.[0-9]+)?$",

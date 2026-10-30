@@ -7,9 +7,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
-from nxos_mcp.guardrails.validator import ArgSchemas
 from nxos_mcp.nxapi.errors import GuardrailViolation
-from nxos_mcp.parsers.common import rows
 from nxos_mcp.runtime import Runtime, error_result
 
 
@@ -51,7 +49,7 @@ def register_generic_tools(mcp: Any, rt: Runtime) -> None:
         },
     )
     async def list_devices(role: str | None = None, site: str | None = None) -> dict[str, Any]:
-        devices = rt.inventory.list(role=role, site=site)
+        devices = rt.inventory.list_devices(role=role, site=site)
         return {
             "summary": {"count": len(devices)},
             "data": [
@@ -89,7 +87,9 @@ def register_generic_tools(mcp: Any, rt: Runtime) -> None:
             rt.assert_tool_allowed(dev, "get_device_info")
             ver = await rt.execute(dev, "show version", tool="get_device_info")
             # VERIFY: feature list command varies slightly by release
-            feat = await rt.execute(dev, "show feature | include nxapi|nve|bgp|vpc|nv", tool="get_device_info")
+            feat = await rt.execute(
+                dev, "show feature | include nxapi|nve|bgp|vpc|nv", tool="get_device_info"
+            )
             summary = {
                 "version_keys": ver.summary,
                 "features_snippet": feat.summary,
@@ -102,7 +102,7 @@ def register_generic_tools(mcp: Any, rt: Runtime) -> None:
                 "truncated": ver.truncated or feat.truncated,
                 "meta": ver.meta.model_dump(),
             }
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)
 
     @mcp.tool(
@@ -139,7 +139,7 @@ def register_generic_tools(mcp: Any, rt: Runtime) -> None:
                 output_format=args.output_format,
             )
             return result.model_dump()
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)
 
     @mcp.tool(
@@ -183,7 +183,7 @@ def register_generic_tools(mcp: Any, rt: Runtime) -> None:
                         include_raw=args.include_raw,
                     )
                     return {"device": name, "ok": True, "result": res.model_dump()}
-                except Exception as exc:  # noqa: BLE001
+                except Exception as exc:
                     return {"device": name, "ok": False, "error": error_result(exc, device=name)}
 
             results = await asyncio.gather(*[one(n) for n in args.devices])
@@ -194,5 +194,5 @@ def register_generic_tools(mcp: Any, rt: Runtime) -> None:
                 "warnings": [],
                 "truncated": False,
             }
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc)

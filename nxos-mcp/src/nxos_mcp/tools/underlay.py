@@ -18,7 +18,10 @@ HINTS = {
 def register_underlay_tools(mcp: Any, rt: Runtime) -> None:
     @mcp.tool(
         name="show_ospf_neighbors",
-        description="Show OSPF neighbors. Use when underlay is OSPF and adjacency/VTEP reachability fails.",
+        description=(
+            "Show OSPF neighbors. Use when underlay is OSPF and adjacency/VTEP "
+            "reachability fails."
+        ),
         annotations={"title": "Show OSPF Neighbors", **HINTS},
     )
     async def show_ospf_neighbors(device: str, include_raw: bool = False) -> dict[str, Any]:
@@ -36,7 +39,7 @@ def register_underlay_tools(mcp: Any, rt: Runtime) -> None:
                 "truncated": result.truncated,
                 "meta": result.meta.model_dump(),
             }
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)
 
     @mcp.tool(
@@ -58,12 +61,15 @@ def register_underlay_tools(mcp: Any, rt: Runtime) -> None:
                 "truncated": result.truncated,
                 "meta": result.meta.model_dump(),
             }
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)
 
     @mcp.tool(
         name="show_bgp_ipv4_summary",
-        description="Show BGP IPv4 unicast summary (underlay eBGP). Use for underlay BGP session health.",
+        description=(
+            "Show BGP IPv4 unicast summary (underlay eBGP). "
+            "Use for underlay BGP session health."
+        ),
         annotations={"title": "Show BGP IPv4 Summary", **HINTS},
     )
     async def show_bgp_ipv4_summary(device: str, include_raw: bool = False) -> dict[str, Any]:
@@ -83,12 +89,14 @@ def register_underlay_tools(mcp: Any, rt: Runtime) -> None:
                 "truncated": result.truncated,
                 "meta": result.meta.model_dump(),
             }
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)
 
     @mcp.tool(
         name="show_bfd_neighbors",
-        description="Show BFD neighbors. Use when underlay sessions flap or ECMP paths look unstable.",
+        description=(
+            "Show BFD neighbors. Use when underlay sessions flap or ECMP paths look unstable."
+        ),
         annotations={"title": "Show BFD Neighbors", **HINTS},
     )
     async def show_bfd_neighbors(device: str, include_raw: bool = False) -> dict[str, Any]:
@@ -105,12 +113,15 @@ def register_underlay_tools(mcp: Any, rt: Runtime) -> None:
                 "truncated": result.truncated,
                 "meta": result.meta.model_dump(),
             }
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)
 
     @mcp.tool(
         name="show_ip_route_underlay",
-        description="Show default-VRF IPv4 routes (optional prefix). Use for VTEP loopback reachability in underlay.",
+        description=(
+            "Show default-VRF IPv4 routes (optional prefix). "
+            "Use for VTEP loopback reachability in underlay."
+        ),
         annotations={"title": "Show IP Route Underlay", **HINTS},
     )
     async def show_ip_route_underlay(
@@ -120,10 +131,7 @@ def register_underlay_tools(mcp: Any, rt: Runtime) -> None:
             from nxos_mcp.guardrails.validator import ArgSchemas
 
             dev = rt.get_device(device)
-            if prefix:
-                cmd = f"show ip route {ArgSchemas.prefix(prefix)}"
-            else:
-                cmd = "show ip route"
+            cmd = f"show ip route {ArgSchemas.prefix(prefix)}" if prefix else "show ip route"
             result = await rt.execute(
                 dev, cmd, tool="show_ip_route_underlay", vrf="default", include_raw=include_raw
             )
@@ -135,7 +143,7 @@ def register_underlay_tools(mcp: Any, rt: Runtime) -> None:
                 "truncated": result.truncated,
                 "meta": result.meta.model_dump(),
             }
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)
 
     @mcp.tool(
@@ -172,5 +180,5 @@ def register_underlay_tools(mcp: Any, rt: Runtime) -> None:
                 "truncated": result.truncated or mtu.truncated,
                 "meta": result.meta.model_dump(),
             }
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)

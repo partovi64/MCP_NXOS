@@ -7,7 +7,7 @@ from typing import Any, Literal
 
 from nxos_mcp.guardrails.validator import ArgSchemas, PingArgs, TracerouteArgs
 from nxos_mcp.nxapi.errors import GuardrailViolation
-from nxos_mcp.parsers.common import page, pick, rows
+from nxos_mcp.parsers.common import page, rows
 from nxos_mcp.runtime import Runtime, error_result
 
 HINTS = {
@@ -21,7 +21,10 @@ HINTS = {
 def register_vrf_tools(mcp: Any, rt: Runtime) -> None:
     @mcp.tool(
         name="list_vrfs",
-        description="List VRFs with state. Use to discover tenant VRFs and L3 context before per-VRF tools.",
+        description=(
+            "List VRFs with state. Use to discover tenant VRFs and L3 context "
+            "before per-VRF tools."
+        ),
         annotations={"title": "List VRFs", **HINTS},
     )
     async def list_vrfs(device: str, include_raw: bool = False) -> dict[str, Any]:
@@ -39,7 +42,7 @@ def register_vrf_tools(mcp: Any, rt: Runtime) -> None:
                 "truncated": result.truncated,
                 "meta": result.meta.model_dump(),
             }
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)
 
     @mcp.tool(
@@ -60,12 +63,15 @@ def register_vrf_tools(mcp: Any, rt: Runtime) -> None:
                 include_raw=include_raw,
             )
             return result.model_dump()
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)
 
     @mcp.tool(
         name="show_ip_route_vrf",
-        description="Show IPv4 routes in a VRF (optional prefix). Use for blackhole / missing route checks.",
+        description=(
+            "Show IPv4 routes in a VRF (optional prefix). "
+            "Use for blackhole / missing route checks."
+        ),
         annotations={"title": "Show IP Route VRF", **HINTS},
     )
     async def show_ip_route_vrf(
@@ -97,7 +103,7 @@ def register_vrf_tools(mcp: Any, rt: Runtime) -> None:
                 "truncated": result.truncated or meta["has_more"],
                 "meta": result.meta.model_dump(),
             }
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)
 
     @mcp.tool(
@@ -127,7 +133,7 @@ def register_vrf_tools(mcp: Any, rt: Runtime) -> None:
                 "truncated": result.truncated,
                 "meta": result.meta.model_dump(),
             }
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)
 
     @mcp.tool(
@@ -150,12 +156,15 @@ def register_vrf_tools(mcp: Any, rt: Runtime) -> None:
                 include_raw=include_raw,
             )
             return result.model_dump()
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)
 
     @mcp.tool(
         name="show_bgp_vrf_summary",
-        description="Show BGP summary for a VRF address-family. Use to check PE-CE / overlay BGP sessions.",
+        description=(
+            "Show BGP summary for a VRF address-family. "
+            "Use to check PE-CE / overlay BGP sessions."
+        ),
         annotations={"title": "Show BGP VRF Summary", **HINTS},
     )
     async def show_bgp_vrf_summary(
@@ -173,12 +182,15 @@ def register_vrf_tools(mcp: Any, rt: Runtime) -> None:
                 dev, cmd, tool="show_bgp_vrf_summary", vrf=vrf_s, include_raw=include_raw
             )
             return result.model_dump()
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)
 
     @mcp.tool(
         name="show_bgp_vrf",
-        description="Show BGP routes in a VRF AF (optional prefix). Use after local RIB checks fail.",
+        description=(
+            "Show BGP routes in a VRF AF (optional prefix). "
+            "Use after local RIB checks fail."
+        ),
         annotations={"title": "Show BGP VRF", **HINTS},
     )
     async def show_bgp_vrf(
@@ -200,7 +212,7 @@ def register_vrf_tools(mcp: Any, rt: Runtime) -> None:
                 dev, cmd, tool="show_bgp_vrf", vrf=vrf_s, include_raw=include_raw
             )
             return result.model_dump()
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)
 
     @mcp.tool(
@@ -223,7 +235,11 @@ def register_vrf_tools(mcp: Any, rt: Runtime) -> None:
     ) -> dict[str, Any]:
         try:
             lim = rt.policy.limits
-            if count > lim.ping_count_max or timeout > lim.ping_timeout_max_s or size > lim.ping_size_max:
+            if (
+                count > lim.ping_count_max
+                or timeout > lim.ping_timeout_max_s
+                or size > lim.ping_size_max
+            ):
                 raise GuardrailViolation("ping parameters exceed policy limits")
             dev = rt.get_device(device)
             await rt.ensure_vrf_exists(dev, ArgSchemas.vrf(vrf))
@@ -236,7 +252,7 @@ def register_vrf_tools(mcp: Any, rt: Runtime) -> None:
                 dev, cmd, tool="ping_vrf", vrf=vrf, include_raw=include_raw
             )
             return result.model_dump()
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)
 
     @mcp.tool(
@@ -261,12 +277,15 @@ def register_vrf_tools(mcp: Any, rt: Runtime) -> None:
                 dev, cmd, tool="traceroute_vrf", vrf=vrf, include_raw=include_raw
             )
             return result.model_dump()
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)
 
     @mcp.tool(
         name="show_vrf_rt_import_export",
-        description="Show VRF route-target import/export. Use for EVPN type-5 / inter-VRF RT mismatch.",
+        description=(
+            "Show VRF route-target import/export. "
+            "Use for EVPN type-5 / inter-VRF RT mismatch."
+        ),
         annotations={"title": "Show VRF RT Import/Export", **HINTS},
     )
     async def show_vrf_rt_import_export(
@@ -286,10 +305,12 @@ def register_vrf_tools(mcp: Any, rt: Runtime) -> None:
             )
             return {
                 **result.model_dump(),
-                "warnings": result.warnings
-                + ["# VERIFY: parse RT fields from detail JSON for your NX-OS release"],
+                "warnings": [
+                    *result.warnings,
+                    "# VERIFY: parse RT fields from detail JSON for your NX-OS release",
+                ],
             }
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)
 
     @mcp.tool(
@@ -321,7 +342,7 @@ def register_vrf_tools(mcp: Any, rt: Runtime) -> None:
                         include_raw=include_raw,
                     )
                     return {"device": name, "ok": True, "data": res.data, "summary": res.summary}
-                except Exception as exc:  # noqa: BLE001
+                except Exception as exc:
                     return {"device": name, "ok": False, "error": error_result(exc, device=name)}
 
             results = await asyncio.gather(*[one(n) for n in devices])
@@ -332,11 +353,14 @@ def register_vrf_tools(mcp: Any, rt: Runtime) -> None:
                     "devices": len(results),
                     "ok": len(ok),
                     "failed": len(results) - len(ok),
-                    "note": "Compare RD/RT/L3VNI fields manually from data; schema varies by release",
+                    "note": (
+                        "Compare RD/RT/L3VNI fields manually from data; "
+                        "schema varies by release"
+                    ),
                 },
                 "data": results,
                 "warnings": [],
                 "truncated": False,
             }
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc)

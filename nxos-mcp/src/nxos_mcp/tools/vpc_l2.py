@@ -27,12 +27,15 @@ def register_vpc_l2_tools(mcp: Any, rt: Runtime) -> None:
             dev = rt.get_device(device)
             result = await rt.execute(dev, "show vpc", tool="show_vpc", include_raw=include_raw)
             return result.model_dump()
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)
 
     @mcp.tool(
         name="show_vpc_consistency",
-        description="Show vPC consistency parameters (type-1/type-2). Use when vPC is up but forwarding is asymmetric.",
+        description=(
+            "Show vPC consistency parameters (type-1/type-2). "
+            "Use when vPC is up but forwarding is asymmetric."
+        ),
         annotations={"title": "Show vPC Consistency", **HINTS},
     )
     async def show_vpc_consistency(device: str, include_raw: bool = False) -> dict[str, Any]:
@@ -46,7 +49,7 @@ def register_vpc_l2_tools(mcp: Any, rt: Runtime) -> None:
                 include_raw=include_raw,
             )
             return result.model_dump()
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)
 
     @mcp.tool(
@@ -71,7 +74,7 @@ def register_vpc_l2_tools(mcp: Any, rt: Runtime) -> None:
                 "truncated": result.truncated,
                 "meta": result.meta.model_dump(),
             }
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)
 
     @mcp.tool(
@@ -89,12 +92,15 @@ def register_vpc_l2_tools(mcp: Any, rt: Runtime) -> None:
                 dev, cmd, tool="show_spanning_tree_vlan", include_raw=include_raw
             )
             return result.model_dump()
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)
 
     @mcp.tool(
         name="show_mac_address_table",
-        description="Show MAC address table filtered by VLAN/MAC/interface. Use for L2 location of a host.",
+        description=(
+            "Show MAC address table filtered by VLAN/MAC/interface. "
+            "Use for L2 location of a host."
+        ),
         annotations={"title": "Show MAC Address Table", **HINTS},
     )
     async def show_mac_address_table(
@@ -129,7 +135,7 @@ def register_vpc_l2_tools(mcp: Any, rt: Runtime) -> None:
                 "truncated": result.truncated or meta["has_more"],
                 "meta": result.meta.model_dump(),
             }
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)
 
     @mcp.tool(
@@ -151,12 +157,14 @@ def register_vpc_l2_tools(mcp: Any, rt: Runtime) -> None:
                 "truncated": result.truncated,
                 "meta": result.meta.model_dump(),
             }
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)
 
     @mcp.tool(
         name="show_interface_counters_errors",
-        description="Show interface error counters. Use for CRC/input errors correlating with loss.",
+        description=(
+            "Show interface error counters. Use for CRC/input errors correlating with loss."
+        ),
         annotations={"title": "Show Interface Counters Errors", **HINTS},
     )
     async def show_interface_counters_errors(
@@ -171,5 +179,5 @@ def register_vpc_l2_tools(mcp: Any, rt: Runtime) -> None:
                 include_raw=include_raw,
             )
             return result.model_dump()
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return error_result(exc, device=device)

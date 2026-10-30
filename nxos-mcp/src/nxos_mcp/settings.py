@@ -2,14 +2,14 @@
 
 from __future__ import annotations
 
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
 
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class Transport(str, Enum):
+class Transport(StrEnum):
     STDIO = "stdio"
     STREAMABLE_HTTP = "streamable-http"
 

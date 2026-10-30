@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any, Literal
 
 from pydantic import BaseModel, Field
@@ -35,7 +35,7 @@ class ToolMeta(BaseModel):
     device: str | None = None
     command_executed: str | None = None
     vrf: str | None = None
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
     duration_ms: int = 0
     warnings: list[str] = Field(default_factory=list)
     truncated: bool = False

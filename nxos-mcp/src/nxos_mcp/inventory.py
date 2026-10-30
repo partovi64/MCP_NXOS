@@ -9,7 +9,6 @@ from typing import Any, Literal
 import yaml
 from pydantic import BaseModel, Field, field_validator
 
-
 Role = Literal["spine", "leaf", "border", "borderleaf", "super-spine", "other"]
 ApiStyle = Literal["jsonrpc", "ins_api"]
 
@@ -55,7 +54,10 @@ class Device(BaseModel):
     def _name_ok(cls, value: str) -> str:
         cleaned = value.strip()
         if not cleaned or any(c in cleaned for c in " \t\n/\\"):
-            raise ValueError("device name must be a non-empty token without whitespace or path chars")
+            raise ValueError(
+                    "device name must be a non-empty token "
+                    "without whitespace or path chars"
+                )
         return cleaned
 
     def resolved(self, defaults: DeviceDefaults) -> Device:
@@ -104,7 +106,7 @@ class Inventory(BaseModel):
             known = ", ".join(sorted(self._by_name)) or "(none)"
             raise KeyError(f"unknown device '{name}'; known: {known}") from exc
 
-    def list(
+    def list_devices(
         self,
         *,
         role: str | None = None,

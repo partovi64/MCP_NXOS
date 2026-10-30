@@ -6,7 +6,7 @@ import json
 import time
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 import structlog
@@ -225,7 +225,7 @@ class Runtime:
             device=device.name,
             command_executed=validated,
             vrf=vrf,
-            timestamp=datetime.now(timezone.utc),
+            timestamp=datetime.now(UTC),
             duration_ms=duration,
             warnings=warnings,
             truncated=truncated,

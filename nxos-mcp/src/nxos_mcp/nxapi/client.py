@@ -168,7 +168,9 @@ class NxapiClient:
         for attempt in range(attempts):
             transient = False
             try:
-                response = await self._client.post(url, json=body, auth=auth)
+                response = await self._client.post(
+                    url, json=body, auth=auth if auth is not None else httpx.USE_CLIENT_DEFAULT
+                )
             except httpx.ConnectError as exc:
                 last_exc = DeviceUnreachable(
                     f"cannot reach {device.name} at {device.host}",

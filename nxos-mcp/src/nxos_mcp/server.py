@@ -2,7 +2,13 @@
 
 from __future__ import annotations
 
+import hmac
+import json
+from collections.abc import Awaitable, Callable
+from typing import Any
+
 import structlog
+import uvicorn
 from mcp.server.fastmcp import FastMCP
 
 from nxos_mcp.resources import register_resources_and_prompts
@@ -16,6 +22,41 @@ from nxos_mcp.tools.vrf import register_vrf_tools
 from nxos_mcp.tools.vxlan import register_vxlan_tools
 
 log = structlog.get_logger(__name__)
+
+# Minimal ASGI types (avoids depending on asgiref/starlette type stubs).
+Scope = dict[str, Any]
+Message = dict[str, Any]
+Receive = Callable[[], Awaitable[Message]]
+Send = Callable[[Message], Awaitable[None]]
+ASGIApp = Callable[..., Awaitable[None]]
+
+
+class BearerAuthMiddleware:
+    """Pure-ASGI middleware enforcing a constant-time bearer-token check."""
+
+    def __init__(self, app: ASGIApp, token: str) -> None:
+        self._app = app
+        self._expected = f"Bearer {token}".encode()
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope.get("type") == "http":
+            headers = {
+                k.decode("latin-1").lower(): v.decode("latin-1")
+                for k, v in scope.get("headers", [])
+            }
+            provided = headers.get("authorization", "").encode()
+            if not hmac.compare_digest(provided, self._expected):
+                body = json.dumps({"error": "unauthorized"}).encode()
+                await send(
+                    {
+                        "type": "http.response.start",
+                        "status": 401,
+                        "headers": [(b"content-type", b"application/json")],
+                    }
+                )
+                await send({"type": "http.response.body", "body": body})
+                return
+        await self._app(scope, receive, send)
 
 
 def configure_logging(level: str) -> None:
@@ -84,15 +125,7 @@ def run(settings: Settings | None = None) -> None:
         mcp.run(transport="stdio")
         return
 
-    # streamable-http — bind localhost by default; auth via bearer middleware if available
-    host = settings.http_host
-    port = settings.http_port
-    log.info("starting_http", host=host, port=port)
-    # FastMCP run supports streamable-http in recent SDK versions
-    try:
-        mcp.run(transport="streamable-http", host=host, port=port)
-    except TypeError:
-        # Fallback signature differences across SDK versions
-        mcp.settings.host = host  # type: ignore[attr-defined]
-        mcp.settings.port = port  # type: ignore[attr-defined]
-        mcp.run(transport="streamable-http")
+    # streamable-http — bearer-token auth enforced on every request; bind localhost by default
+    app = BearerAuthMiddleware(mcp.streamable_http_app(), settings.http_bearer_token)
+    log.info("starting_http", host=settings.http_host, port=settings.http_port)
+    uvicorn.run(app, host=settings.http_host, port=settings.http_port, log_level="warning")
